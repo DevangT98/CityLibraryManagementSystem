@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from mysql_connection import SqlConnection
 from admin_page import AdminPage
+from reader_page import ReaderPage
 class MainPage:
 
     def show_admin_login(self):
@@ -64,7 +65,7 @@ class MainPage:
         self.reader_id_entry = Entry(self.reader_page_frame,textvariable=self.reader_id,borderwidth=3, relief=SUNKEN, width=23)
         self.reader_id_entry.grid(row=0, column=1)
 
-    
+        
         self.reader_login_button = Button(self.reader_page_frame,text="Login",command=self.login_reader,borderwidth=3)
         self.reader_login_button.grid(row=1,column=1)
 
@@ -80,7 +81,7 @@ class MainPage:
 
             if self.sql_obj.validate_reader(int(reader_card_no_info)):
                 self.main_window.destroy()
-                AdminPage.setupUI(AdminPage())
+                ReaderPage.setup_UI(ReaderPage())
             else:
                 messagebox.showerror("Error!","Reader Doesn't Exist!!....",parent=self.reader_page) 
 

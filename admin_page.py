@@ -131,25 +131,26 @@ class AdminPage:
         if self.n_info == '':
              self.n_info = 1
         
-        self.res_frame = Toplevel(relief=GROOVE)
-        self.res_frame.resizable(False,False)
-        vsb = ttk.Scrollbar(self.res_frame, orient="vertical")
-        table = ttk.Treeview(self.res_frame,columns=(1,2,3),selectmode='browse',yscrollcommand=vsb.set)
-        table['show'] ='headings'
-        vsb.pack(side='right', fill='y')
-        vsb.config(command=table.yview)
-        table.pack()
-        table.heading(1,text="Reader ID")
-        table.heading(2,text="Reader Name")
-        table.heading(3,text="Number of Books")
+        self.most_freq_res_frame = Toplevel(relief=GROOVE)
+        self.most_freq_res_frame.resizable(False,False)
+        self.most_freq_res_frame_vsb = ttk.Scrollbar(self.most_freq_res_frame, orient="vertical")
+        self.most_freq_res_frame_table = ttk.Treeview(self.most_freq_res_frame,columns=(1,2,3),selectmode='browse',yscrollcommand=self.most_freq_res_frame_vsb.set)
+        self.most_freq_res_frame_table['show'] ='headings'
+        self.most_freq_res_frame_vsb.pack(side='right', fill='y')
+        self.most_freq_res_frame_vsb.config(command=self.most_freq_res_frame_table.yview)
+
+        self.most_freq_res_frame_table.pack()
+        self.most_freq_res_frame_table.heading(1,text="Reader ID")
+        self.most_freq_res_frame_table.heading(2,text="Reader Name")
+        self.most_freq_res_frame_table.heading(3,text="Number of Books")
       
 
-        row = self.sql_obj.show_most_frequent_borrowers(self.n_info)
+        row = self.sql_obj.show_most_frequent_borrowers(int(self.n_info))
 
         for data in row:
-            table.insert("","end",values=data)
+            self.most_freq_res_frame_table.insert("","end",values=data)
     
-        self.res_frame.mainloop()
+        self.most_freq_res_frame.mainloop()
 
 
     #MOST FREQUENT BORROWERS IN BRANCH
@@ -163,24 +164,24 @@ class AdminPage:
         if self.n_branch_id_info == '':
             messagebox.showerror("Error!","Please Enter a Branch Number!....")
         else:
-            self.res_frame = Toplevel(relief=GROOVE)
-            self.res_frame.resizable(False,False)
-            vsb = ttk.Scrollbar(self.res_frame, orient="vertical")
-            table = ttk.Treeview(self.res_frame,columns=(1,2,3),selectmode='browse',yscrollcommand=vsb.set)
-            table['show'] ='headings'
-            vsb.pack(side='right', fill='y')
-            vsb.config(command=table.yview)
-            table.pack()
-            table.heading(1,text="Reader ID")
-            table.heading(2,text="Reader Name")
-            table.heading(3,text="Number of Books")
+            self.most_freq_borrower_res_frame = Toplevel(relief=GROOVE)
+            self.most_freq_borrower_res_frame.resizable(False,False)
+            self.most_freq_borrower_res_frame_vsb = ttk.Scrollbar(self.most_freq_borrower_res_frame, orient="vertical")
+            self.most_freq_borrower_res_frame_table = ttk.Treeview(self.most_freq_borrower_res_frame,columns=(1,2,3),selectmode='browse',yscrollcommand=self.most_freq_borrower_res_frame_vsb.set)
+            self.most_freq_borrower_res_frame_table['show'] ='headings'
+            self.most_freq_borrower_res_frame_vsb.pack(side='right', fill='y')
+            self.most_freq_borrower_res_frame_vsb.config(command=self.most_freq_borrower_res_frame_table.yview)
+            self.most_freq_borrower_res_frame_table.pack()
+            self.most_freq_borrower_res_frame_table.heading(1,text="Reader ID")
+            self.most_freq_borrower_res_frame_table.heading(2,text="Reader Name")
+            self.most_freq_borrower_res_frame_table.heading(3,text="Number of Books")
       
-            row = self.sql_obj.show_branch_most_frequenct_borrowers(self.n_info,self.n_branch_id_info)
+            row = self.sql_obj.show_branch_most_frequenct_borrowers(int(self.n_branch_info),int(self.n_branch_id_info))
 
             for data in row:
-                table.insert("","end",values=data)
+                self.most_freq_borrower_res_frame_table.insert("","end",values=data)
     
-            self.res_frame.mainloop()
+            self.most_freq_borrower_res_frame.mainloop()
 
     
     #MOST BORROWED BOOKS
@@ -189,23 +190,24 @@ class AdminPage:
         self.n_most_borrowed_info = self.n_branch_entry.get() 
         if self.n_most_borrowed_info == '':
             self.n_most_borrowed_info=1
-        self.res_frame = Toplevel(relief=GROOVE)
-        self.res_frame.resizable(False,False)
-        vsb = ttk.Scrollbar(self.res_frame, orient="vertical")
-        table = ttk.Treeview(self.res_frame,columns=(1,2),selectmode='browse',yscrollcommand=vsb.set)
-        table['show'] ='headings'
-        vsb.pack(side='right', fill='y')
-        vsb.config(command=table.yview)
-        table.pack()
-        table.heading(1,text="Book ID")
-        table.heading(2,text="Book Name")
+
+        self.most_borrowed_res_frame = Toplevel(relief=GROOVE)
+        self.most_borrowed_res_frame.resizable(False,False)
+        self.most_borrowed_vsb = ttk.Scrollbar(self.most_borrowed_res_frame, orient="vertical")
+        self.most_borrowed_table = ttk.Treeview(self.most_borrowed_res_frame,columns=(1,2),selectmode='browse',yscrollcommand=self.most_borrowed_vsb.set)
+        self.most_borrowed_table['show'] ='headings'
+        self.most_borrowed_vsb.pack(side='right', fill='y')
+        self.most_borrowed_vsb.config(command=self.most_borrowed_table.yview)
+        self.most_borrowed_table.pack()
+        self.most_borrowed_table.heading(1,text="Book ID")
+        self.most_borrowed_table.heading(2,text="Book Name")
       
-        row = self.sql_obj.show_most_borrowed_books(self.n_most_borrowed_info)
+        row = self.sql_obj.show_most_borrowed_books(int(self.n_most_borrowed_info))
 
         for data in row:
-            table.insert("","end",values=data)
+            self.most_borrowed_table.insert("","end",values=data)
     
-        self.res_frame.mainloop()
+        self.most_borrowed_res_frame.mainloop()
 
     #MOST BORROWED BOOKS IN BRANCH
     def get_branch_most_borrowed_books(self):
@@ -219,23 +221,24 @@ class AdminPage:
         if self.n_branch_most_borrowed_books_id == '':
             messagebox.showerror("Error!","Please Enter a Branch Number!....")
         else:
-            self.res_frame = Toplevel(relief=GROOVE)
-            self.res_frame.resizable(False,False)
-            vsb = ttk.Scrollbar(self.res_frame, orient="vertical")
-            table = ttk.Treeview(self.res_frame,columns=(1,2),selectmode='browse',yscrollcommand=vsb.set)
-            table['show'] ='headings'
-            vsb.pack(side='right', fill='y')
-            vsb.config(command=table.yview)
-            table.pack()
-            table.heading(1,text="Book ID")
-            table.heading(2,text="Book Name")
+            self.branch_res_frame = Toplevel(relief=GROOVE)
+            self.branch_res_frame.resizable(False,False)
+            self.branch_vsb = ttk.Scrollbar(self.branch_res_frame, orient="vertical")
+            self.branch_table = ttk.Treeview(self.branch_res_frame,columns=(1,2,3),selectmode='browse',yscrollcommand=self.branch_vsb.set)
+            self.branch_table['show'] ='headings'
+            self.branch_vsb.pack(side='right', fill='y')
+            self.branch_vsb.config(command=self.branch_table.yview)
+            self.branch_table.pack()
+            self.branch_table.heading(1,text="Book ID")
+            self.branch_table.heading(2,text="Book Name")
+            self.branch_table.heading(3,text="Number of Books")
         
-            row = self.sql_obj.show_branch_most_borrowed_books(self.n_branch_most_borrowed_info,self.n_branch_most_borrowed_books_id)
+            row = self.sql_obj.show_branch_most_borrowed_books(int(self.n_branch_most_borrowed_info),int(self.n_branch_most_borrowed_books_id))
 
             for data in row:
-                table.insert("","end",values=data)
+                self.branch_table.insert("","end",values=data)
         
-            self.res_frame.mainloop()
+            self.branch_res_frame.mainloop()
  
 
 
