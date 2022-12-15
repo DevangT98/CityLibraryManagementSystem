@@ -6,16 +6,19 @@ from mysql_connection import SqlConnection
 class AdminPage:
         
     reader_type_list = ["Student", "Staff", "Senior Citizen"]
+  
+    #NAVIGATE PAGES
     def go_back(self):
         self.admin_next.withdraw()
         self.admin_window.wm_deiconify()
-        
+
+
     def switch_page(self):
         self.admin_window.withdraw()    
         self.admin_next = Toplevel()
         self.admin_next.resizable(False,False)  
         self.admin_next.iconbitmap("book1.ico")
-        self.admin_next_frame = Frame(self.admin_next)
+        self.admin_next_frame = Frame(self.admin_next,bg="white")
         self.admin_next_frame.grid(row=0,column=0,sticky="news",padx=20,pady=20)
         self.admin_next.title("Admin Page")
         self.back_button = Button(self.admin_next,text="Go to Previous Page",command=self.go_back,borderwidth=3)
@@ -28,11 +31,13 @@ class AdminPage:
         self.branch_most_borrowed_books()
         self.admin_next.mainloop()
 
-    #GUI 
+  
+  
+#----------------------------------------------------GUI-------------------------------------------------------------- 
 
     #MOST FREQUENT BORROWERS GUI
     def most_freq_borrowers(self):
-        self.most_freq_borrowers_frame = LabelFrame(self.admin_next_frame,text="Most Frequent Borrowers")
+        self.most_freq_borrowers_frame = LabelFrame(self.admin_next_frame,text="Most Frequent Borrowers",bg="white")
         self.most_freq_borrowers_frame.grid(row=0,column=0,sticky="news",padx=20,pady=20)
 
         self.n_label = Label(self.most_freq_borrowers_frame,text="Enter N: ")
@@ -50,7 +55,7 @@ class AdminPage:
 
     #MOST FREQUENT BORROWERS IN BRANCH GUI
     def branch_most_freq_borrowers(self):
-        self.branch_most_freq_borrowers_frame = LabelFrame(self.admin_next_frame,text="Most Frequent Borrowers in Branch")
+        self.branch_most_freq_borrowers_frame = LabelFrame(self.admin_next_frame,text="Most Frequent Borrowers in Branch",bg="white")
         self.branch_most_freq_borrowers_frame.grid(row=0,column=1,sticky="news",padx=20,pady=20)
 
         self.n_branch_label = Label(self.branch_most_freq_borrowers_frame,text="Enter N: ")
@@ -76,7 +81,7 @@ class AdminPage:
 
     #MOST BORROWED BOOKS
     def most_borrowed_books(self):
-        self.most_borrowed_books_frame = LabelFrame(self.admin_next_frame,text="Most Borrowed Books")
+        self.most_borrowed_books_frame = LabelFrame(self.admin_next_frame,text="Most Borrowed Books",bg="white")
         self.most_borrowed_books_frame.grid(row=2,column=0,sticky="news",padx=20,pady=20)
 
         self.n_most_borrowed_books_label = Label(self.most_borrowed_books_frame,text="Enter N: ")
@@ -95,7 +100,7 @@ class AdminPage:
 
     #MOST BORROWED BOOKS IN BRANCH
     def branch_most_borrowed_books(self):
-        self.branch_most_borrowed_books_frame = LabelFrame(self.admin_next_frame,text="Most Borrowed Books in Branch")
+        self.branch_most_borrowed_books_frame = LabelFrame(self.admin_next_frame,text="Most Borrowed Books in Branch",bg="white")
         self.branch_most_borrowed_books_frame.grid(row=2,column=1,sticky="news",padx=20,pady=20)
 
         self.n_branch_most_borrowed_books_label = Label(self.branch_most_borrowed_books_frame,text="Enter N: ")
@@ -122,7 +127,7 @@ class AdminPage:
 
 
 
-    #WRITE SQL
+#---------------------------------------------------SQL FUNC---------------------------------------------------------
     
     #MOST FREQUENT BORROWERS SQL
     def get_most_freq_borrowers(self):
@@ -243,18 +248,27 @@ class AdminPage:
 
 
     def insert_doc(self):
-        pass
+        sql_obj = SqlConnection()
 
+        self.doc_id_info = int(self.add_doc_entry.get())
+        self.copy_no_info = self.copy_no_entry.get()
+        self.branch_id_info = self.bid_entry.get()
+        self.copy_position_info = self.position_entry.get().upper()
+        print(self.copy_position_info)
+       # sql_obj.check_copy(self.doc_id_info,self.copy_no_info,self.branch_id_info)
+        output = sql_obj.insert_document(self.doc_id_info,self.copy_no_info,self.branch_id_info,self.copy_position_info)
+        if output:
+            messagebox.showinfo("Success!","Copy Inserted!!...")
+        else:
+            messagebox.showerror("Error","Copy already exists for the given input!!....")
 
     def search_doc(self):
-        pass
+       pass
 
     #PRINT BRANCH
     def get_branch(self):
-        self.sql_obj = SqlConnection()
-
-        
     
+        self.sql_obj = SqlConnection()    
         self.res_frame = Toplevel(relief=GROOVE)
         self.res_frame.resizable(False,False)
         vsb = ttk.Scrollbar(self.res_frame, orient="vertical")
@@ -311,7 +325,7 @@ class AdminPage:
         #self.bg_label_admin.place(x=0,y=0,relwidth=1,relheight=1)
         
         self.admin_window.iconbitmap("book1.ico")
-        self.admin_frame = Frame(self.admin_window,width=1500,height=1100)
+        self.admin_frame = Frame(self.admin_window,width=1500,height=1100,bg="white")
         #self.bg_label = Label(self.admin_frame,image=self.bg_image)
         #self.bg_label.place(x=0,y=0,relwidth=1,relheight=1)
         self.admin_frame.pack()
@@ -325,7 +339,7 @@ class AdminPage:
         self.doc_id_label = Label(self.add_doc_label_frame,text="DocumentID (DocID)")
         self.doc_id_label.grid(row=0,column=0)
 
-        self.copy_no_label = Label(self.add_doc_label_frame,text="No of Copies (CopyNO)")
+        self.copy_no_label = Label(self.add_doc_label_frame,text="Copy Number")
         self.copy_no_label.grid(row=0,column=1)
 
 
@@ -337,28 +351,31 @@ class AdminPage:
         self.position_label.grid(row=2,column=1)
 
         #Variables to store input
-        self.doc_id = StringVar()
         self.bid = StringVar()
         self.copy_no = StringVar()
         self.position = StringVar()
 
+        sql_obj = SqlConnection()
+        
+        row = sql_obj.get_doc_ids()
+        self.doc_id_list =[i[0] for i in row] 
         #inputs
-        add_doc_entry = Entry(self.add_doc_label_frame,textvariable=self.doc_id, borderwidth=3, relief=SUNKEN, width=23)
-        add_doc_entry.grid(row=1,column=0)
+        self.add_doc_entry = ttk.Combobox(self.add_doc_label_frame,values=self.doc_id_list)
+        self.add_doc_entry.grid(row=1,column=0)
 
 
-        copy_no_entry = Entry(self.add_doc_label_frame,textvariable=self.copy_no, borderwidth=3, relief=SUNKEN, width=23)
-        copy_no_entry.grid(row=1,column=1)
+        self.copy_no_entry = Entry(self.add_doc_label_frame,textvariable=self.copy_no, borderwidth=3, relief=SUNKEN, width=23)
+        self.copy_no_entry.grid(row=1,column=1)
 
-        bid_entry = Entry(self.add_doc_label_frame,textvariable=self.bid, borderwidth=3, relief=SUNKEN, width=23)
-        bid_entry.grid(row=3,column=0)
+        self.bid_entry = Entry(self.add_doc_label_frame,textvariable=self.bid, borderwidth=3, relief=SUNKEN, width=23)
+        self.bid_entry.grid(row=3,column=0)
 
-        position_entry = Entry(self.add_doc_label_frame,textvariable=self.position, borderwidth=3, relief=SUNKEN, width=23)
-        position_entry.grid(row=3,column=1)
+        self.position_entry = Entry(self.add_doc_label_frame,textvariable=self.position, borderwidth=3, relief=SUNKEN, width=23)
+        self.position_entry.grid(row=3,column=1)
 
 
-        add_copy_button = Button(self.add_doc_label_frame,text="Add Copy",command=self.insert_doc,borderwidth=3)
-        add_copy_button.grid(row=4,column=0)
+        self.add_copy_button = Button(self.add_doc_label_frame,text="Add Copy",command=self.insert_doc,borderwidth=3)
+        self.add_copy_button.grid(row=4,column=0)
 
         for widget in self.add_doc_label_frame.winfo_children():
             widget.grid_configure(padx=15,pady=10)
@@ -366,7 +383,7 @@ class AdminPage:
 
 
         #SEARCH DOCUMENT FRAME
-        search_doc_label_frame= LabelFrame(self.admin_frame,text="Search Document")
+        search_doc_label_frame= LabelFrame(self.admin_frame,text="Search Document",bg="white")
         search_doc_label_frame.grid(row=0,column=1,sticky="news",padx=20,pady=20)
 
         #Label
@@ -392,7 +409,7 @@ class AdminPage:
 
         #Add Reader Frame
 
-        add_new_reader_frame = LabelFrame(self.admin_frame,text='Add new Reader')
+        add_new_reader_frame = LabelFrame(self.admin_frame,text='Add new Reader',bg="white")
         add_new_reader_frame.grid(row=1,column=0,sticky="news",padx=20,pady=20)
 
         reader_card_no_label = Label(add_new_reader_frame,text="Reader Card Number", fg="black")
@@ -452,7 +469,7 @@ class AdminPage:
 
         #Print Branch Frame
 
-        branch_det_label_frame = LabelFrame(self.admin_frame,text="Print Branch Info")
+        branch_det_label_frame = LabelFrame(self.admin_frame,text="Print Branch Info",bg="white")
         branch_det_label_frame.grid(row=1,column=1,sticky="news",padx=20,pady=20)
 
         branch_det_button = Button(branch_det_label_frame,text="Get Branch Details",command=self.get_branch,borderwidth=3)

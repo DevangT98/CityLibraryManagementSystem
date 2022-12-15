@@ -8,7 +8,8 @@ class MainPage:
 
     def show_admin_login(self):
         self.admin_login_page = Toplevel()
-        self.admin_login_page_frame = Frame(self.admin_login_page,width=500,height=500)
+        self.admin_login_page.iconbitmap("book1.ico")
+        self.admin_login_page_frame = Frame(self.admin_login_page,width=500,height=500,bg="white")
         self.admin_login_page.resizable(False,False)
         self.admin_login_page.propagate(0)
         self.admin_login_page_frame.grid_propagate(False)
@@ -40,7 +41,7 @@ class MainPage:
         password = self.password_entry.get()
 
         if not id or not password:
-            messagebox.showerror("Error!","Please Enter ID and Password!!....",parent=self.reader_page)
+            messagebox.showerror("Error!","Please Enter ID and Password!!....",parent=self.admin_login_page)
         else:
             self.sql_obj = SqlConnection()
 
@@ -48,11 +49,12 @@ class MainPage:
                 self.main_window.destroy()
                 AdminPage.setupUI(AdminPage())
             else:
-                messagebox.showerror("Error!","Invalid ID or Password!!....",parent=self.reader_page)
+                messagebox.showerror("Error!","Invalid ID or Password!!....",parent=self.admin_login_page)
 
     def show_reader_page(self):
-        self.reader_page = Toplevel()
-        self.reader_page_frame = Frame(self.reader_page,width=500,height=500)
+        self.reader_page = Toplevel(bg='#E0E0FF')
+        self.reader_page.iconbitmap("book1.ico")
+        self.reader_page_frame = Frame(self.reader_page,width=500,height=500,bg='#E0E0FF')
         self.reader_page.resizable(False,False)
         self.reader_page.propagate(0)
         self.reader_page_frame.grid_propagate(False)
@@ -81,7 +83,7 @@ class MainPage:
 
             if self.sql_obj.validate_reader(int(reader_card_no_info)):
                 self.main_window.destroy()
-                ReaderPage.setup_UI(ReaderPage())
+                ReaderPage.setup_UI(ReaderPage(reader_card_no_info))
             else:
                 messagebox.showerror("Error!","Reader Doesn't Exist!!....",parent=self.reader_page) 
 
@@ -89,14 +91,25 @@ class MainPage:
 
         self.main_window = Tk()
         self.main_window.geometry("500x500")
-        self.main_frame = Frame(self.main_window,width=500,height=500)
+        self.main_window.iconbitmap("book1.ico")
+        self.bg_image = PhotoImage(file='C:\\Users\\crdne\\Desktop\\City-Library-Management-System-master\\library1.png')
+        self.bg_label = Label(self.main_window,image=self.bg_image)
+        self.bg_label.place(x=0,y=0,relwidth=1,relheight=1)
+        self.main_frame = Frame(self.main_window,width=500,height=500,bg='#E0E0FF')
+        self.bg_label_frame = Label(self.main_frame,image=self.bg_image)
+        self.bg_label_frame.place(x=0,y=0,relwidth=1,relheight=1)
         self.main_frame.grid(row=0,column=0,sticky='news')
+
         self.main_window.title("Main Menu")
         self.main_window.resizable(False,False)
-        self.reader_button = Button(self.main_frame, text="Reader Login",borderwidth=3,height=2,command=self.show_reader_page)
 
-        self.reader_button.place(relx=0.5, rely=0.5, anchor=CENTER)
-        self.admin_button = Button(self.main_frame,text='Admin Login',borderwidth=3,height=2,command=self.show_admin_login)
+        self.welcome_label= Label(self.main_frame,font=("Trajan Pro", 16, "bold"),text= "CITY LIBRARY MANAGEMENT SYSTEM",bg="white")
+        self.welcome_label.place(relx=0.5, rely=0.1, anchor=CENTER)
+
+        self.reader_button = Button(self.main_frame, font= ("Sans Serif", 12, "bold") ,text="Reader Login",borderwidth=5,height=2,command=self.show_reader_page)
+
+        self.reader_button.place(relx=0.5, rely=0.6, anchor=CENTER)
+        self.admin_button = Button(self.main_frame,font=("Sans Serif", 12, "bold"), text='Admin Login',borderwidth=5,height=2,command=self.show_admin_login)
         self.admin_button.place(relx=0.5, rely=0.4, anchor=CENTER)
 
 
